@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หมวดกีฬา</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-cartoon">
+
+    <div class="page" style="margin: 0 auto;">
+
+        <div class="cartoon-card">
+            <div style="font-size: 3rem;">🏀</div>
+            <h2>หมวดกีฬา</h2>
+            <p>มาเรียนรู้กติกากีฬากันเถอะ</p>
+
+            <button class="cartoon-btn"
+                onclick="showInfo('ฟุตบอล ⚽', '1. ห้ามใช้มือแตะบอล (ยกเว้นโกล)<br>2. เล่น 11 คน (สนามใหญ่)<br>3. ยิงเข้าประตูได้คะแนน')">ฟุตบอล</button>
+            <button class="cartoon-btn"
+                onclick="showInfo('บาสเกตบอล 🏀', '1. ห้ามถือลูกวิ่ง (ต้องเลี้ยงบอล)<br>2. ทีมละ 5 คน<br>3. ชู้ตลงห่วงได้ 2 หรือ 3 คะแนน')">บาสเกตบอล</button>
+            <button class="cartoon-btn"
+                onclick="showInfo('วอลเลย์บอล 🏐', '1. ห้ามตกพื้นฝั่งเรา<br>2. แตะบอลได้ 3 ครั้งก่อนข้ามฝั่ง<br>3. ทีมละ 6 คน')">วอลเลย์บอล</button>
+
+            <div id="sport-info"
+                style="margin-top: 20px; background: #E0F2F1; padding: 15px; border-radius: 15px; display: none; text-align: left;">
+            </div>
+
+            <br>
+            <button class="cartoon-btn secondary" onclick="location.href='subject.html'">🔙 กลับ</button>
+        </div>
+    </div>
+
+    <script>
+        function showInfo(title, desc) {
+            let div = document.getElementById("sport-info");
+            div.style.display = "block";
+            div.innerHTML = `<h3 style='color:#00796B'>${title}</h3><p>${desc}</p>`;
+        }
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
+    </script>
+
+</body>
+
+</html>

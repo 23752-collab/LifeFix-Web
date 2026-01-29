@@ -60,8 +60,12 @@
       localStorage.setItem("cat", type);
 
       if (type === "อาหาร") {
-        location.href = "food.html";   // 👉 ไปหน้าเลือก food / cook
-      } else {
+        location.href = "food.html";
+      }
+      else if (type === "การเรียน") {
+        location.href = "study.html";   // ⭐ เพิ่ม
+      }
+      else {
         location.href = "problems.html";
       }
     }
