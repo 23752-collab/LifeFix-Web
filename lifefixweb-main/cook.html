@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทำอาหารกินเอง</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-cartoon">
+
+    <div class="page" style="margin: 0 auto;">
+        <div class="cartoon-card">
+            <h2>ครัวหรรษา 🍳</h2>
+            <p>เลือกวัตถุดิบที่มีในตู้เย็นเลย</p>
+
+            <div
+                style="text-align: left; background: #FFF9C4; padding: 15px; border-radius: 15px; border: 2px solid #FFF59D;">
+                <label style="display: block; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" value="ข้าว" style="transform: scale(1.5); margin-right: 10px;"> 🍚 ข้าว
+                </label>
+                <label style="display: block; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" value="ไข่" style="transform: scale(1.5); margin-right: 10px;"> 🥚 ไข่
+                </label>
+                <label style="display: block; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" value="หมู" style="transform: scale(1.5); margin-right: 10px;"> 🥩 หมู
+                </label>
+                <label style="display: block; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" value="ไก่" style="transform: scale(1.5); margin-right: 10px;"> 🍗 ไก่
+                </label>
+                <label style="display: block; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" value="ผัก" style="transform: scale(1.5); margin-right: 10px;"> 🥬 ผัก
+                </label>
+                <label style="display: block; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" value="ไส้กรอก" style="transform: scale(1.5); margin-right: 10px;"> 🌭
+                    ไส้กรอก
+                </label>
+            </div>
+
+            <button class="cartoon-btn" onclick="makeFood()">🍽 ดูเมนูที่ทำได้</button>
+
+            <div id="result" style="margin-top: 20px; font-size: 1.1rem;"></div>
+
+            <div style="margin-top: 20px;">
+                <a href="javascript:history.back()">⬅ ย้อนกลับ</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function makeFood() {
+            let items = [];
+            document.querySelectorAll("input:checked")
+                .forEach(i => items.push(i.value));
+
+            let r = document.getElementById("result");
+
+            // Clear previous result animation
+            r.style.opacity = 0;
+            setTimeout(() => {
+                if (items.includes("ข้าว") && items.includes("ไข่")) {
+                    r.innerHTML = `
+          <div style='background:#E8F5E9; padding:15px; border-radius:15px; border:2px dashed #81C784;'>
+            <h3 style='color:#43A047'>🍳 ข้าวผัดไข่</h3>
+            <p><b>วัตถุดิบ:</b> ข้าว, ไข่</p>
+            <hr style='border:1px dashed #A5D6A7'>
+            <p style='text-align:left'><b>วิธีทำง่ายๆ:</b><br>
+            1. ตั้งกระทะ ใส่น้ำมันนิดนึง<br>
+            2. ตอกไข่ลงไป ผัดให้สุก<br>
+            3. ใส่ข้าว ปรุงรส ผัดให้เข้ากันหอมๆ เลย</p>
+          </div>`;
+                }
+                else if (items.includes("ไข่") && items.includes("ไส้กรอก")) {
+                    r.innerHTML = `
+          <div style='background:#FFEBEE; padding:15px; border-radius:15px; border:2px dashed #E57373;'>
+            <h3 style='color:#E53935'>🥚 ไข่เจียวไส้กรอก</h3>
+            <p><b>วัตถุดิบ:</b> ไข่, ไส้กรอก</p>
+            <hr style='border:1px dashed #EF9A9A'>
+            <p style='text-align:left'><b>วิธีทำง่ายๆ:</b><br>
+            1. หั่นไส้กรอกเป็นชิ้นเล็กๆ<br>
+            2. ตอกไข่ ตีให้เข้ากัน ใส่ไส้กรอก<br>
+            3. ทอดในกระทะร้อนๆ จนสุกฟู</p>
+          </div>`;
+                }
+                else if (items.length == 0) {
+                    r.innerHTML = "⚠ เลือกวัตถุดิบก่อนนะครับ";
+                }
+                else {
+                    r.innerHTML = "❌ พี่หุ่นยนต์ยังนึกเมนูไม่ออกเลย ลองเลือกอย่างอื่นดูนะ";
+                }
+                r.style.transition = "opacity 0.5s";
+                r.style.opacity = 1;
+            }, 200);
+        }
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
+    </script>
+
+</body>
+
+</html>
