@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#FFB7B2">
   <title>เลือกหมวดปัญหา</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="minigames.css">
 </head>
 
 <body>
@@ -43,41 +44,45 @@
       </div>
     </div>
 
-  </div>
+    <!-- Mini Game Button -->
+    <div class="fab-container">
+      <button class="fab-btn" onclick="location.href='minigames.html'">🎮</button>
+    </div>
 
-  <script>
-    function openHistory() {
-      let u = localStorage.getItem("currentUser");
-      let h = JSON.parse(localStorage.getItem("history_" + u) || "[]");
-      if (h.length == 0) { alert("ยังไม่มีประวัติจ้า"); return; }
 
-      let t = "📜 ประวัติของคุณ\n\n";
-      h.forEach(x => t += "• " + x + "\n");
-      alert(t);
-    }
 
-    function goSolve(type) {
-      localStorage.setItem("cat", type);
+    <script>
+      function openHistory() {
+        let u = localStorage.getItem("currentUser");
+        // If user wants to go to history.html explicitly:
+        location.href = 'history.html';
 
-      if (type === "อาหาร") {
-        location.href = "food.html";
+
       }
-      else if (type === "การเรียน") {
-        location.href = "study.html";
-      }
-      else if (type === "การเงิน") {
-        location.href = "finance.html"; // ⭐ เพิ่ม
-      }
-      else {
-        location.href = "problems.html";
-      }
-    }
 
 
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
+      function goSolve(type) {
+        localStorage.setItem("cat", type);
+
+        if (type === "อาหาร") {
+          location.href = "food.html";
+        }
+        else if (type === "การเรียน") {
+          location.href = "study.html";
+        }
+        else if (type === "การเงิน") {
+          location.href = "finance.html"; // ⭐ เพิ่ม
+        }
+        else {
+          location.href = "problems.html";
+        }
+      }
+
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+      }
+    </script>
 
 </body>
 

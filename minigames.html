@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Games 🎮</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="minigames.css">
+</head>
+
+<body class="bg-cartoon">
+
+    <div class="page" style="max-width: 600px; margin: 0 auto;">
+
+        <div class="top-bar">
+            <button class="icon-btn" onclick="location.href='category.html'">🔙 กลับ</button>
+            <div class="app-title" style="font-size: 1.5rem; color: #FF6F61;">Mini Games 🎮</div>
+            <div style="width: 40px;"></div> <!-- Spacer -->
+        </div>
+
+        <!-- Game Menu -->
+        <div id="gameMenu">
+            <div class="game-title">เลือกเกมที่อยากเล่น 🎈</div>
+            <div class="menu-grid">
+                <div class="game-card" onclick="startGame(1)">
+                    <div class="game-card-icon">🎴</div>
+                    <div>
+                        <h3>Card Match</h3>
+                        <p>จับคู่ภาพเหมือน ทดสอบความจำ</p>
+                    </div>
+                </div>
+                <div class="game-card" onclick="startGame(2)">
+                    <div class="game-card-icon">🐹</div>
+                    <div>
+                        <h3>Memory Simon</h3>
+                        <p>จำลำดับตัวการ์ตูน</p>
+                    </div>
+                </div>
+                <div class="game-card" onclick="startGame(3)">
+                    <div class="game-card-icon">2️⃣4️⃣</div>
+                    <div>
+                        <h3>24 Game</h3>
+                        <p>คำนวณเลข 4 ตัวให้ได้ 24</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game 1: Card Match -->
+        <div id="game1" class="game-container">
+            <button class="back-btn" onclick="showMenu()">🔙 เมนูเกม</button>
+            <div class="game-title">Card Match</div>
+            <div id="msg1" class="status-msg"></div>
+            <div class="difficulty-selector">
+                <button onclick="initCardGame('easy')" style="padding: 5px 10px;">ง่าย (4x3)</button>
+                <button onclick="initCardGame('normal')" style="padding: 5px 10px;">ปานกลาง (4x4)</button>
+                <button onclick="initCardGame('hard')" style="padding: 5px 10px;">ยาก (5x4)</button>
+            </div>
+            <div class="grid-board" id="cardBoard"></div>
+        </div>
+
+        <!-- Game 2: Memory Simon -->
+        <div id="game2" class="game-container">
+            <button class="back-btn" onclick="showMenu()">🔙 เมนูเกม</button>
+            <div class="game-title">Memory Simon</div>
+            <div id="msg2" class="status-msg"></div>
+            <div class="score-display">Score: <span id="simonScore">0</span></div>
+            <div class="simon-board">
+                <div class="simon-btn" id="simon0" onclick="handleSimonInput(0)">🐶</div>
+                <div class="simon-btn" id="simon1" onclick="handleSimonInput(1)">🐱</div>
+                <div class="simon-btn" id="simon2" onclick="handleSimonInput(2)">🐭</div>
+                <div class="simon-btn" id="simon3" onclick="handleSimonInput(3)">🐹</div>
+            </div>
+            <button onclick="startSimonGame()" style="margin-top:20px; padding: 10px 20px;">Start / Restart</button>
+        </div>
+
+        <!-- Game 3: 24 Game -->
+        <div id="game3" class="game-container">
+            <button class="back-btn" onclick="showMenu()">🔙 เมนูเกม</button>
+            <div class="game-title">24 Game</div>
+            <p>สร้างสมการให้ได้ผลลัพธ์ 24</p>
+            <div id="msg3" class="status-msg"></div>
+
+            <div class="nums-display" id="nums24">
+                <!-- Numbers will appear here -->
+            </div>
+
+            <div class="operators">
+                <button class="op-btn" onclick="selectOp('+')">+</button>
+                <button class="op-btn" onclick="selectOp('-')">-</button>
+                <button class="op-btn" onclick="selectOp('*')">×</button>
+                <button class="op-btn" onclick="selectOp('/')">÷</button>
+                <button class="op-btn" onclick="selectOp('(')">(</button>
+                <button class="op-btn" onclick="selectOp(')')">)</button>
+            </div>
+
+            <div class="expression-box" id="calcDisplay"></div>
+
+            <div>
+                <button onclick="clear24()"
+                    style="background:#ffb7b2; border:none; padding:10px; border-radius:5px;">C</button>
+                <button onclick="check24()"
+                    style="background:#b9fbc0; border:none; padding:10px 20px; border-radius:5px;">ส่งคำตอบ</button>
+                <button onclick="new24Game()"
+                    style="background:#afe9e7; border:none; padding:10px; border-radius:5px;">สุ่มใหม่</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="minigames.js"></script>
+</body>
+
+</html>
