@@ -21,6 +21,16 @@
         </div>
     </div>
 
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            // ⭐⭐⭐ ใส่ Public Key ของคุณตรงนี้ ⭐⭐⭐
+            // สมัครฟรีที่ https://www.emailjs.com/
+            emailjs.init("fjbwfeGop0-ZgqyIS");
+        })();
+    </script>
+
     <script>
         function sendOTP() {
             let e = document.getElementById("email").value;
@@ -31,13 +41,45 @@
 
             if (!found) { alert("ไม่พบอีเมลนี้ในระบบจ้า ลองเช็คใหม่อีกทีนะ"); return; }
 
+            // Create OTP
             let otp = Math.floor(100000 + Math.random() * 900000);
+
+            // Save to localStorage for verification
             localStorage.setItem("otp", otp);
             localStorage.setItem("otp_user", found);
 
-            alert("รหัสยืนยันของคุณคือ: " + otp + "\n(จำลองการส่งทางอีเมล)");
+            // Send Email using EmailJS
+            const serviceID = "service_7s3oqo7"; // ⭐ ใส่ Service ID
+            const templateID = "template_k76cq6t"; // ⭐ ใส่ Template ID
 
-            location.href = "verify.html";
+            const params = {
+                to_email: e,
+                message: otp,
+                to_name: found
+            };
+
+            const btn = document.querySelector(".cartoon-btn");
+            const originalText = btn.innerText;
+            btn.innerText = "กำลังส่ง...";
+            btn.disabled = true;
+
+            emailjs.send(serviceID, templateID, params)
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert("ส่งรหัสยืนยันไปที่อีเมล " + e + " แล้วจ้า! \n(อย่าลืมเช็คใน Junk/Spam ด้วยนะ)");
+                    location.href = "verify.html";
+                }, function (error) {
+                    console.log('FAILED...', error);
+                    alert("เกิดข้อผิดพลาดในการส่งอีเมล: " + JSON.stringify(error));
+
+                    // Fallback for demo (in case user hasn't set up keys yet)
+                    alert("ระบบ Demo: รหัสของคุณคือ " + otp);
+                    location.href = "verify.html";
+                })
+                .finally(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                });
         }
 
         if ("serviceWorker" in navigator) {
