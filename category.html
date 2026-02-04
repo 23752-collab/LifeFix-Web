@@ -38,6 +38,10 @@
         <div style="font-size: 3rem;">🍱</div>
         <div>อาหาร</div>
       </div>
+      <div class="category-item color-purple" onclick="goSolve('ภาษา')">
+        <div style="font-size: 3rem;">🗣️</div>
+        <div>ภาษา</div>
+      </div>
       <div class="category-item color-yellow" onclick="goSolve('อื่นๆ')">
         <div style="font-size: 3rem;">🧩</div>
         <div>อื่นๆ</div>
@@ -71,7 +75,10 @@
           location.href = "study.html";
         }
         else if (type === "การเงิน") {
-          location.href = "finance.html"; // ⭐ เพิ่ม
+          location.href = "finance.html";
+        }
+        else if (type === "ภาษา") {
+          location.href = "languages.html";
         }
         else {
           location.href = "problems.html";
