@@ -26,6 +26,10 @@
     <h2>อยากให้ช่วยเรื่องอะไรครับ?</h2>
 
     <div class="grid-container">
+      <div class="category-item color-yellow" onclick="goSolve('การเดินทาง')">
+        <div style="font-size: 3rem;">🚗</div>
+        <div>การเดินทาง</div>
+      </div>
       <div class="category-item color-blue" onclick="goSolve('การเงิน')">
         <div style="font-size: 3rem;">💰</div>
         <div>การเงิน</div>
@@ -79,6 +83,9 @@
         }
         else if (type === "ภาษา") {
           location.href = "languages.html";
+        }
+        else if (type === "การเดินทาง") {
+          location.href = "travel.html";
         }
         else {
           location.href = "problems.html";

@@ -17,6 +17,19 @@
   --thick-border: 4px solid #555;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.bg-cartoon {
+  background-image:
+    radial-gradient(#fff 20%, transparent 20%),
+    radial-gradient(#fff 20%, transparent 20%);
+  background-color: #B5EAD7;
+  background-position: 0 0, 25px 25px;
+  background-size: 50px 50px;
+}
+
 body {
   margin: 0;
   font-family: 'Fredoka', cursive;
@@ -187,6 +200,11 @@ a:hover {
   background-color: #FFF0FF;
 }
 
+.color-purple {
+  border-color: #BDB2FF;
+  background-color: #F3EFFF;
+}
+
 /* HEADER/TOP BAR */
 .top-bar {
   background: white;
@@ -217,8 +235,10 @@ a:hover {
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 20px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08); /* Softer shadow */
-  border: none; /* Removed thick border for cleaner look */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  /* Softer shadow */
+  border: none;
+  /* Removed thick border for cleaner look */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
   position: relative;
@@ -226,7 +246,7 @@ a:hover {
 
 .modern-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
 }
 
 .card-icon {
@@ -245,9 +265,11 @@ a:hover {
 .bg-gradient-purple {
   background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
 }
+
 .bg-gradient-orange {
   background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
 }
+
 .bg-gradient-green {
   background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
 }
