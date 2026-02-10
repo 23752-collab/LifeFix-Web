@@ -21,16 +21,7 @@
         .options button {
             display: block;
             width: 100%;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .options button:hover {
-            background-color: #e0f7fa;
+            margin: 10px 0;
         }
 
         .result-box {
@@ -61,8 +52,8 @@
                     onclick="location.reload()">ทำแบบทดสอบอีกครั้ง</button>
             </div>
 
-            <div style="margin-top: 20px;">
-                <a href="guidance_select.html">⬅ ย้อนกลับ</a>
+            <div style="margin-top: 30px; border-top: 2px dashed #eee; padding-top: 20px;">
+                <button class="icon-btn" onclick="location.href='guidance_select.html'">⬅ ย้อนกลับ</button>
             </div>
         </div>
     </div>
@@ -110,8 +101,9 @@
             let html = `<div class="quiz-container">
                 <div class="question">${q.q}</div>
                 <div class="options">`;
-            q.options.forEach(opt => {
-                html += `<button onclick="answer('${opt.score}')">${opt.text}</button>`;
+            const colors = ['color-blue', 'color-yellow', 'color-pink', 'color-green'];
+            q.options.forEach((opt, index) => {
+                html += `<button class="cartoon-btn ${colors[index % colors.length]}" onclick="answer('${opt.score}')">${opt.text}</button>`;
             });
             html += `</div></div>`;
             document.getElementById("quiz-area").innerHTML = html;

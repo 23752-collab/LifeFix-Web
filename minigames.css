@@ -155,15 +155,28 @@
 }
 
 .back-btn {
-    background: #ddd;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 10px;
+    background: #FFB7B2;
+    border: 3px solid white;
+    padding: 8px 20px;
+    border-radius: 15px;
     cursor: pointer;
     margin-bottom: 15px;
-    font-family: 'Nunito', sans-serif;
-    color: #555;
+    font-family: 'Fredoka', cursive;
+    color: white;
     float: left;
+    box-shadow: 0 4px 0 #E57373;
+    transition: all 0.1s;
+    position: relative;
+    top: 0;
+}
+
+.back-btn:hover {
+    filter: brightness(1.05);
+}
+
+.back-btn:active {
+    top: 3px;
+    box-shadow: 0 1px 0 #E57373;
 }
 
 /* Game 1: Card Match */

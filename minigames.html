@@ -52,10 +52,13 @@
             <button class="back-btn" onclick="showMenu()">🔙 เมนูเกม</button>
             <div class="game-title">Card Match</div>
             <div id="msg1" class="status-msg"></div>
-            <div class="difficulty-selector">
-                <button onclick="initCardGame('easy')" style="padding: 5px 10px;">ง่าย (4x3)</button>
-                <button onclick="initCardGame('normal')" style="padding: 5px 10px;">ปานกลาง (4x4)</button>
-                <button onclick="initCardGame('hard')" style="padding: 5px 10px;">ยาก (5x4)</button>
+            <div class="difficulty-selector" style="display: flex; gap: 10px; justify-content: center;">
+                <button class="cartoon-btn color-green" onclick="initCardGame('easy')"
+                    style="font-size: 1rem; width: auto; padding: 10px 15px;">ง่าย (4x3)</button>
+                <button class="cartoon-btn color-yellow" onclick="initCardGame('normal')"
+                    style="font-size: 1rem; width: auto; padding: 10px 15px;">ปานกลาง (4x4)</button>
+                <button class="cartoon-btn color-pink" onclick="initCardGame('hard')"
+                    style="font-size: 1rem; width: auto; padding: 10px 15px;">ยาก (5x4)</button>
             </div>
             <div class="grid-board" id="cardBoard"></div>
         </div>
@@ -72,7 +75,8 @@
                 <div class="simon-btn" id="simon2" onclick="handleSimonInput(2)">🐭</div>
                 <div class="simon-btn" id="simon3" onclick="handleSimonInput(3)">🐹</div>
             </div>
-            <button onclick="startSimonGame()" style="margin-top:20px; padding: 10px 20px;">Start / Restart</button>
+            <button class="cartoon-btn color-blue" onclick="startSimonGame()"
+                style="margin-top:20px; width: auto; padding: 10px 30px;">Start / Restart</button>
         </div>
 
         <!-- Game 3: 24 Game -->
@@ -97,13 +101,13 @@
 
             <div class="expression-box" id="calcDisplay"></div>
 
-            <div>
-                <button onclick="clear24()"
-                    style="background:#ffb7b2; border:none; padding:10px; border-radius:5px;">C</button>
-                <button onclick="check24()"
-                    style="background:#b9fbc0; border:none; padding:10px 20px; border-radius:5px;">ส่งคำตอบ</button>
-                <button onclick="new24Game()"
-                    style="background:#afe9e7; border:none; padding:10px; border-radius:5px;">สุ่มใหม่</button>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <button class="cartoon-btn color-pink" onclick="clear24()"
+                    style="width: 50px; padding: 10px; margin-top: 0;">C</button>
+                <button class="cartoon-btn color-green" onclick="check24()"
+                    style="width: auto; padding: 10px 30px; margin-top: 0;">ส่งคำตอบ</button>
+                <button class="cartoon-btn color-blue" onclick="new24Game()"
+                    style="width: auto; padding: 10px 20px; margin-top: 0;">สุ่มใหม่</button>
             </div>
         </div>
 

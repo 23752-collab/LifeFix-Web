@@ -114,32 +114,96 @@ p {
   padding: 15px;
   background: #FF9AA2;
   color: white;
-  border: none;
+  border: 3px solid #fff;
   border-radius: 15px;
   font-size: 1.2rem;
   font-family: 'Fredoka', cursive;
   cursor: pointer;
-  margin-top: 15px;
-  box-shadow: 0 5px 0 #E57373;
+  margin-top: 10px;
+  box-shadow: 0 6px 0 #E57373;
   /* 3D effect */
   transition: all 0.1s;
   position: relative;
   top: 0;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.cartoon-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #E57373;
 }
 
 .cartoon-btn:active {
   box-shadow: 0 2px 0 #E57373;
-  top: 3px;
+  top: 4px;
+  transform: translateY(0);
 }
 
 .cartoon-btn.secondary {
   background: #A0E7E5;
-  box-shadow: 0 5px 0 #81C7C5;
+  box-shadow: 0 6px 0 #81C7C5;
   color: #444;
 }
 
 .cartoon-btn.secondary:active {
   box-shadow: 0 2px 0 #81C7C5;
+}
+
+/* Button Color Variations */
+.cartoon-btn.color-green {
+  background: #B9FBC0;
+  box-shadow: 0 6px 0 #81C784;
+  color: #2E7D32;
+}
+
+.cartoon-btn.color-green:active {
+  box-shadow: 0 2px 0 #81C784;
+}
+
+.cartoon-btn.color-yellow {
+  background: #FDFFB6;
+  box-shadow: 0 6px 0 #FBC02D;
+  color: #5D4037;
+}
+
+.cartoon-btn.color-yellow:active {
+  box-shadow: 0 2px 0 #FBC02D;
+}
+
+.cartoon-btn.color-blue {
+  background: #A0C4FF;
+  box-shadow: 0 6px 0 #64B5F6;
+  color: #1565C0;
+}
+
+.cartoon-btn.color-blue:active {
+  box-shadow: 0 2px 0 #64B5F6;
+}
+
+.icon-btn {
+  background: white;
+  border: 3px solid #eee;
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-family: 'Fredoka', cursive;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #555;
+  box-shadow: 0 3px 0 #eee;
+  position: relative;
+  top: 0;
+}
+
+.icon-btn:hover {
+  background: #f8f9fa;
+  border-color: #FFB7B2;
+}
+
+.icon-btn:active {
+  top: 2px;
+  box-shadow: none;
 }
 
 /* LINKS */
@@ -216,16 +280,6 @@ a:hover {
   border-radius: 0 0 25px 25px;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.icon-btn {
-  background: transparent;
-  border: 2px solid #ddd;
-  border-radius: 50px;
-  padding: 8px 15px;
-  font-family: 'Fredoka', cursive;
-  cursor: pointer;
-  transition: 0.2s;
 }
 
 
