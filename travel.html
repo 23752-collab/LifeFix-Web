@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Helper - ผู้ช่วยแก้ปัญหาการเดินทาง</title>
+    <title>ผู้ช่วยแก้ปัญหาการเดินทาง</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="ai-service.js"></script>
 </head>
 
 <body class="bg-cartoon">
@@ -58,6 +59,18 @@
                         <div style="font-size: 2.5rem;">⛈️</div>
                         <div>ฝนตกหนัก</div>
                     </div>
+                </div>
+
+                <!-- AI Analysis Section -->
+                <div class="cartoon-card" style="margin-top: 25px; border-top: 3px dashed #eee; padding-top: 25px;">
+                    <h3 style="color: #2196F3;">🤖 ให้ AI ช่วยเลือกว่าเกิดอะไรขึ้น</h3>
+                    <textarea id="aiTravelInput" class="cartoon-input"
+                        placeholder="เล่าปัญหาของคุณที่นี่... (เช่น 'รถจอดเสียอยู่ข้างทางด่วน')"
+                        style="height: 80px; resize: none;" onkeypress="handleEnterTravel(event)"></textarea>
+                    <button class="cartoon-btn" id="aiTravelBtn" onclick="analyzeTravelWithAI()">✨ ให้ AI
+                        วิเคราะห์ปัญหา</button>
+                    <p id="aiTravelStatus" style="font-size: 0.8rem; color: #888; margin-top: 5px; display: none;">
+                        กำลังวิเคราะห์ด้วย AI...</p>
                 </div>
             </section>
 
@@ -145,7 +158,52 @@
 
     </div>
 
+    <script src="ai-service.js"></script>
     <script src="script.js"></script>
+    <script>
+        function handleEnterTravel(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                analyzeTravelWithAI();
+            }
+        }
+
+        async function analyzeTravelWithAI() {
+            const input = document.getElementById('aiTravelInput').value.trim();
+            const btn = document.getElementById('aiTravelBtn');
+            const status = document.getElementById('aiTravelStatus');
+
+            if (!input) {
+                alert("ลองพิมพ์เล่าปัญหาของคุณก่อนนะ เดี๋ยวพี่ AI ช่วยวิเคราะห์ให้จ้า!");
+                return;
+            }
+
+            const apiKey = AIService.getApiKey();
+            if (!apiKey) {
+                alert("กรุณาติดตั้ง Gemini API Key ใน 'หน้าส่งปัญหา' ก่อนนะจ๊ะ หรือจะเลือกเลือกหัวข้อด้านบนเองก็ได้จ้า!");
+                return;
+            }
+
+            btn.disabled = true;
+            status.style.display = 'block';
+
+            try {
+                const category = await AIService.analyzeTravelProblem(input);
+                if (category) {
+                    selectProblem(category);
+                    alert(`AI วิเคราะห์แล้วว่าน่าจะเกี่ยวกับ: ${problems[category].title} 🤔`);
+                } else {
+                    alert("ขอโทษทีจ้า AI ยังวิเคราะห์ปัญหาไม่ค่อยกระจ่าง ลองเลือกหัวข้อด้านบนแทนนะจ๊ะ!");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("เกิดประเด็นขัดข้องในการติดต่อ AI จ้า!");
+            } finally {
+                btn.disabled = false;
+                status.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 
 </html>
