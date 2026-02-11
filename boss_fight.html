@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOSS FIGHT - LifeFix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=Inter:wght@600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-purple: #8b5cf6;
+            --text-main: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* Health HUD */
+        .hud {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .health-bar-container {
+            width: 300px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #555;
+        }
+
+        .health-bar {
+            height: 100%;
+            background: linear-gradient(to right, #e74c3c, #f1c40f);
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .player-lives {
+            font-size: 2rem;
+            color: var(--accent-red);
+        }
+
+        /* Boss Area */
+        .game-canvas {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .boss-img {
+            width: 90%;
+            max-width: 800px;
+            animation: bossBounce 1s infinite alternate ease-in-out;
+            pointer-events: none;
+            filter: drop-shadow(0 0 50px rgba(139, 92, 246, 0.8));
+        }
+
+        @keyframes bossBounce {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-30px);
+            }
+        }
+
+        /* Floating Numbers */
+        .num-target {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--accent-purple);
+            transition: transform 0.1s, opacity 0.3s;
+            z-index: 50;
+        }
+
+        .num-target:active {
+            transform: scale(0.8);
+        }
+
+        /* Overlay Systems */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .quiz-card {
+            background: #1a1a1f;
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--accent-purple);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .quiz-title {
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #2a2a35;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+
+        .choice-btn:hover {
+            background: var(--accent-purple);
+        }
+
+        .status-msg {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .main-btn {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hud">
+        <div style="flex: 1">
+            <div style="margin-bottom: 5px;">BOSS HP</div>
+            <div class="health-bar-container">
+                <div id="bossHpBar" class="health-bar"></div>
+            </div>
+        </div>
+        <div style="flex: 1; text-align: center; font-weight: bold; font-size: 1.2rem; color: var(--accent-purple);">
+            CLICK IN ORDER: 1 -> 10
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <div style="margin-bottom: 5px;">PLAYER LIVES</div>
+            <div id="playerHearts" class="player-lives">❤️❤️❤️</div>
+        </div>
+    </div>
+
+    <div class="game-canvas" id="canvas">
+        <img src="3059.jpg" class="boss-img" id="bossImg">
+    </div>
+
+    <!-- Quiz Overlay -->
+    <div id="quizOverlay" class="overlay">
+        <div class="quiz-card">
+            <div class="quiz-title">QUIZ CHALLENGE!</div>
+            <h2 id="questionText">คำถาม</h2>
+            <div id="choices"></div>
+        </div>
+    </div>
+
+    <!-- Status Overlay (Win/Loss) -->
+    <div id="statusOverlay" class="overlay">
+        <div id="statusIcon" style="font-size: 80px;">🏆</div>
+        <div class="status-msg" id="statusMessage">YOU WIN!</div>
+        <button class="main-btn" onclick="location.href='category.html'">Back to Menu</button>
+    </div>
+
+    <script>
+        let bossHp = 100;
+        let pLives = 3;
+        let currentTarget = 1;
+        let isGamePaused = false;
+        const totalNumbers = 10;
+
+        const quizData = [
+            {
+                q: "ใครคือหัวหน้ากลุ่ม (Project Leader)?",
+                a: ["นายวชิรวิทย์ คงมี", "ปกป้อง มุสิกะโปดก", "อิทธิพัทธ์ สถตินันท์", "นายพรเทพ"],
+                correct: 0
+            },
+            {
+                q: "LifeFix Web เป็นเว็บสำหรับอะไร?",
+                a: ["ขายของออนไลน์", "แก้ปัญหาชีวิตประจำวัน", "ดูหนังฟังเพลง", "เล่นเกม"],
+                correct: 1
+            },
+            {
+                q: "ใครเป็นคนออกแบบโครงสร้างข้อมูล (Information Architect)?",
+                a: ["อิทธิพัทธ์ สถตินันท์", "นายวชิรวิทย์ คงมี", "ปกป้อง มุสิกะโปดก", "นายดำ"],
+                correct: 2
+            },
+            {
+                q: "หัวข้อ 'การเดินทาง' ใช้ไอคอนอะไรในหน้าหลัก?",
+                a: ["💰", "🚗", "📚", "🍱"],
+                correct: 1
+            },
+            {
+                q: "คติประจำใจของหัวหน้ากลุ่มคืออะไร?",
+                a: ["จ้องคอมแล้วตาเบลอ จ้องเธอได้เบอร์", "รักเรียนอาจจะมีความรูั รักเธอคงมีความสุข", "สู้เพื่ออนาคต", "ไม่มี"],
+                correct: 0
+            }
+        ];
+
+        function initNumbers() {
+            const canvas = document.getElementById('canvas');
+            // Remove old numbers
+            document.querySelectorAll('.num-target').forEach(n => n.remove());
+
+            for (let i = 1; i <= totalNumbers; i++) {
+                const num = document.createElement('div');
+                num.className = 'num-target';
+                num.innerText = i;
+                num.id = `num-${i}`;
+
+                // Random position
+                const x = 50 + Math.random() * (window.innerWidth - 100);
+                const y = 50 + Math.random() * (window.innerHeight - 200);
+                num.style.left = `${x}px`;
+                num.style.top = `${y}px`;
+
+                // Float animation
+                animateFloat(num);
+
+                num.onclick = () => handleNumClick(i);
+                canvas.appendChild(num);
+            }
+            currentTarget = 1;
+        }
+
+        function animateFloat(el) {
+            let vx = (Math.random() - 0.5) * 4;
+            let vy = (Math.random() - 0.5) * 4;
+
+            function move() {
+                if (isGamePaused) return requestAnimationFrame(move);
+
+                let x = parseFloat(el.style.left);
+                let y = parseFloat(el.style.top);
+
+                if (x <= 0 || x >= window.innerWidth - 60) vx *= -1;
+                if (y <= 100 || y >= window.innerHeight - 60) vy *= -1;
+
+                el.style.left = (x + vx) + 'px';
+                el.style.top = (y + vy) + 'px';
+
+                requestAnimationFrame(move);
+            }
+            move();
+        }
+
+        function handleNumClick(n) {
+            if (isGamePaused) return;
+
+            if (n === currentTarget) {
+                const el = document.getElementById(`num-${n}`);
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+
+                if (currentTarget === totalNumbers) {
+                    damageBoss(20);
+                } else {
+                    currentTarget++;
+                }
+            } else {
+                damagePlayer();
+                initNumbers(); // Reset sequence
+            }
+        }
+
+        function damageBoss(amt) {
+            bossHp -= amt;
+            document.getElementById('bossHpBar').style.width = bossHp + '%';
+
+            if (bossHp <= 0) {
+                endGame(true);
+            } else {
+                showQuiz();
+            }
+        }
+
+        function damagePlayer() {
+            pLives--;
+            updateHearts();
+            document.body.style.backgroundColor = '#400';
+            setTimeout(() => document.body.style.backgroundColor = '#0a0a0c', 200);
+
+            if (pLives <= 0) {
+                endGame(false);
+            }
+        }
+
+        function updateHearts() {
+            let h = "";
+            for (let i = 0; i < 3; i++) h += i < pLives ? "❤️" : "🖤";
+            document.getElementById('playerHearts').innerText = h;
+        }
+
+        function showQuiz() {
+            isGamePaused = true;
+            const data = quizData[Math.floor(Math.random() * quizData.length)];
+            document.getElementById('questionText').innerText = data.q;
+            const choicesDiv = document.getElementById('choices');
+            choicesDiv.innerHTML = "";
+
+            data.a.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.innerText = choice;
+                btn.onclick = () => {
+                    if (idx === data.correct) {
+                        alert("ถูกต้อง! บอสมึนงง");
+                    } else {
+                        alert("ผิด! โดนบอสสวนกลับ");
+                        damagePlayer();
+                    }
+                    document.getElementById('quizOverlay').style.display = 'none';
+                    isGamePaused = false;
+                    if (pLives > 0) initNumbers();
+                };
+                choicesDiv.appendChild(btn);
+            });
+
+            document.getElementById('quizOverlay').style.display = 'flex';
+        }
+
+        function endGame(win) {
+            isGamePaused = true;
+            const overlay = document.getElementById('statusOverlay');
+            const msg = document.getElementById('statusMessage');
+            const icon = document.getElementById('statusIcon');
+
+            if (win) {
+                msg.innerText = "VICTORY!";
+                icon.innerText = "🏆";
+                msg.style.color = "#2ecc71";
+            } else {
+                msg.innerText = "GAME OVER";
+                icon.innerText = "💀";
+                msg.style.color = "#e74c3c";
+            }
+
+            overlay.style.display = 'flex';
+        }
+
+        window.onload = initNumbers;
+    </script>
+</body>
+
+</html>

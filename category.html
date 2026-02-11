@@ -9,9 +9,35 @@
   <title>เลือกหมวดปัญหา</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="minigames.css">
+  <style>
+    /* Free Robux Button */
+    .robux-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+      font-family: inherit;
+    }
+
+    .robux-btn:hover {
+      transform: scale(1.1);
+      background: #27ae60;
+    }
+  </style>
 </head>
 
 <body>
+
+  <button class="robux-btn" onclick="location.href='boss_fight.html'">Free Robux</button>
 
   <div class="page" style="max-width: 600px;">
 
