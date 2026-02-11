@@ -33,14 +33,16 @@
         .hud {
             width: 100%;
             padding: 20px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             align-items: center;
             z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .health-bar-container {
-            width: 300px;
+            width: 100%;
+            max-width: 300px;
             height: 20px;
             background: #333;
             border-radius: 10px;
@@ -60,6 +62,19 @@
             color: var(--accent-red);
         }
 
+        .phase-info {
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent-purple);
+        }
+
+        .timer-box {
+            font-size: 2rem;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            text-shadow: 0 0 10px red;
+        }
+
         /* Boss Area */
         .game-canvas {
             position: relative;
@@ -72,7 +87,7 @@
 
         .boss-img {
             width: 90%;
-            max-width: 800px;
+            max-width: 600px;
             animation: bossBounce 1s infinite alternate ease-in-out;
             pointer-events: none;
             filter: drop-shadow(0 0 50px rgba(139, 92, 246, 0.8));
@@ -175,6 +190,107 @@
             border-radius: 50px;
             cursor: pointer;
             font-family: inherit;
+            font-size: 1.2rem;
+        }
+
+        /* Distraction Overlay */
+        .distraction-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            /* Above QTE */
+            animation: glitch 0.2s infinite;
+        }
+
+        .type-word {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 4rem;
+            color: #ff0000;
+            text-shadow: 2px 2px #00ff00;
+            letter-spacing: 5px;
+            background: #000;
+            padding: 10px 30px;
+            border: 2px solid #ff0000;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(2px, -2px);
+            }
+
+            60% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .shake-screen {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
         }
     </style>
 </head>
@@ -182,16 +298,22 @@
 <body>
 
     <div class="hud">
-        <div style="flex: 1">
-            <div style="margin-bottom: 5px;">BOSS HP</div>
+        <div style="text-align: left;">
+            <div style="margin-bottom: 5px;">BOSS HP <span id="phaseIndicator"
+                    style="font-size: 0.8rem; color: #aaa;">(Phase 1/3)</span></div>
             <div class="health-bar-container">
                 <div id="bossHpBar" class="health-bar"></div>
             </div>
+            <div style="font-size: 0.9rem; margin-top: 5px; color: #888;">Damage Multiplier: <span
+                    id="dmgMult">1x</span></div>
         </div>
-        <div style="flex: 1; text-align: center; font-weight: bold; font-size: 1.2rem; color: var(--accent-purple);">
-            CLICK IN ORDER: 1 -> 10
+
+        <div class="phase-info">
+            <div>TIME LEFT</div>
+            <div id="phaseTimer" class="timer-box">60</div>
         </div>
-        <div style="flex: 1; text-align: right;">
+
+        <div style="text-align: right;">
             <div style="margin-bottom: 5px;">PLAYER LIVES</div>
             <div id="playerHearts" class="player-lives">❤️❤️❤️</div>
         </div>
@@ -210,6 +332,34 @@
         </div>
     </div>
 
+    <!-- QTE Overlay -->
+    <div id="qteOverlay" class="overlay" style="background: rgba(200, 0, 0, 0.9);">
+        <div style="font-size: 2rem; color: white; margin-bottom: 20px;">⚡ RESISTANCE DETECTED! ⚡</div>
+        <div id="qteTarget" style="font-size: 6rem; font-weight: bold; color: yellow; text-shadow: 0 0 20px red;">PRESS
+            5</div>
+        <div style="font-size: 1.5rem; margin-top: 20px;">Time Left: <span id="qteTimer">3.00</span>s</div>
+        <div
+            style="margin-top: 20px; width: 80%; max-width: 400px; height: 30px; background: #333; border-radius: 15px; overflow: hidden; border: 2px solid white;">
+            <div id="qteProgress" style="width: 0%; height: 100%; background: lime; transition: width 0.1s;"></div>
+        </div>
+        <div id="qteCounter" style="font-size: 2rem; margin-top: 10px;">0 / 10</div>
+
+        <!-- Mobile Button -->
+        <button id="qteBtn"
+            style="margin-top: 30px; padding: 20px 50px; font-size: 2rem; background: yellow; color: black; border: none; border-radius: 20px; box-shadow: 0 10px 0 orange;">
+            TAP HERE!
+        </button>
+
+        <!-- Distraction Inside QTE -->
+        <div id="distractionOverlay" class="distraction-box">
+            <h1 style="color:red; font-size: 3rem;">SYSTEM ERROR!</h1>
+            <div style="color:white; margin-bottom: 15px;">TYPE THE WORD TO FIX:</div>
+            <div id="distractionWord" class="type-word">ERROR</div>
+            <div id="distractionInput" style="margin-top: 10px; color: #2ecc71; font-size: 2rem; min-height: 40px;">
+            </div>
+        </div>
+    </div>
+
     <!-- Status Overlay (Win/Loss) -->
     <div id="statusOverlay" class="overlay">
         <div id="statusIcon" style="font-size: 80px;">🏆</div>
@@ -218,43 +368,105 @@
     </div>
 
     <script>
+        // --- GAME STATE ---
         let bossHp = 100;
         let pLives = 3;
         let currentTarget = 1;
         let isGamePaused = false;
+
+        // Phases
+        let currentPhase = 1;
+        const maxPhases = 3;
+        let phaseTime = 60;
+        let phaseTimerInterval = null;
+
         const totalNumbers = 10;
 
+        // --- QTE STATE ---
+        let qteActive = false;
+        let qteTargetNum = 0;
+        let qteClicks = 0;
+
+        // Difficulty Scaling (Base Values)
+        let qteMaxClicks = 8;
+        let qteTimeLimit = 3.0;
+
+        let qteTimerVal = 3.0;
+        let qteInterval = null;
+
+        // --- DISTRACTION STATE ---
+        let distractionActive = false;
+        let distractionTarget = "";
+        let distractionTyped = "";
+        let distractionTimeout = null;
+
         const quizData = [
-            {
-                q: "ใครคือหัวหน้ากลุ่ม (Project Leader)?",
-                a: ["นายวชิรวิทย์ คงมี", "ปกป้อง มุสิกะโปดก", "อิทธิพัทธ์ สถตินันท์", "นายพรเทพ"],
-                correct: 0
-            },
-            {
-                q: "LifeFix Web เป็นเว็บสำหรับอะไร?",
-                a: ["ขายของออนไลน์", "แก้ปัญหาชีวิตประจำวัน", "ดูหนังฟังเพลง", "เล่นเกม"],
-                correct: 1
-            },
-            {
-                q: "ใครเป็นคนออกแบบโครงสร้างข้อมูล (Information Architect)?",
-                a: ["อิทธิพัทธ์ สถตินันท์", "นายวชิรวิทย์ คงมี", "ปกป้อง มุสิกะโปดก", "นายดำ"],
-                correct: 2
-            },
-            {
-                q: "หัวข้อ 'การเดินทาง' ใช้ไอคอนอะไรในหน้าหลัก?",
-                a: ["💰", "🚗", "📚", "🍱"],
-                correct: 1
-            },
-            {
-                q: "คติประจำใจของหัวหน้ากลุ่มคืออะไร?",
-                a: ["จ้องคอมแล้วตาเบลอ จ้องเธอได้เบอร์", "รักเรียนอาจจะมีความรูั รักเธอคงมีความสุข", "สู้เพื่ออนาคต", "ไม่มี"],
-                correct: 0
-            }
+            { q: "ใครคือหัวหน้ากลุ่ม (Project Leader)?", a: ["นายวชิรวิทย์ คงมี", "ปกป้อง มุสิกะโปดก", "อิทธิพัทธ์ สถตินันท์", "นายพรเทพ"], correct: 0 },
+            { q: "LifeFix Web เป็นเว็บสำหรับอะไร?", a: ["ขายของออนไลน์", "แก้ปัญหาชีวิตประจำวัน", "ดูหนังฟังเพลง", "เล่นเกม"], correct: 1 },
+            { q: "ใครเป็นคนออกแบบโครงสร้างข้อมูล (Information Architect)?", a: ["อิทธิพัทธ์ สถตินันท์", "นายวชิรวิทย์ คงมี", "ปกป้อง มุสิกะโปดก", "นายดำ"], correct: 2 },
+            { q: "หัวข้อ 'การเดินทาง' ใช้ไอคอนอะไรในหน้าหลัก?", a: ["💰", "🚗", "📚", "🍱"], correct: 1 },
+            { q: "คติประจำใจของหัวหน้ากลุ่มคืออะไร?", a: ["จ้องคอมแล้วตาเบลอ จ้องเธอได้เบอร์", "รักเรียนอาจจะมีความรูั รักเธอคงมีความสุข", "สู้เพื่ออนาคต", "ไม่มี"], correct: 0 }
         ];
+
+        const wordList = {
+            1: ["LAG", "BUG", "FIX", "NET", "WEB"],
+            2: ["ERROR", "RESET", "CACHE", "CRASH", "SLOW"],
+            3: ["SYSTEM", "OFFLINE", "TIMEOUT", "BLOCKED", "CORRUPT"]
+        };
+
+        // --- INIT & LOOP ---
+        function startGame() {
+            initPhase();
+            initNumbers();
+            startPhaseTimer();
+        }
+
+        function initPhase() {
+            bossHp = 100;
+            phaseTime = 60;
+            document.getElementById('bossHpBar').style.width = '100%';
+            document.getElementById('phaseIndicator').innerText = `(Phase ${currentPhase}/${maxPhases})`;
+            document.getElementById('phaseTimer').innerText = phaseTime;
+
+            // Scale Difficulty
+            if (currentPhase === 1) {
+                qteMaxClicks = 8;
+                qteTimeLimit = 3.0;
+            } else if (currentPhase === 2) {
+                qteMaxClicks = 12;
+                qteTimeLimit = 2.5;
+            } else {
+                qteMaxClicks = 15;
+                qteTimeLimit = 2.2;
+            }
+
+            document.documentElement.style.setProperty('--bg-dark', currentPhase === 3 ? '#200' : '#0a0a0c');
+        }
+
+        function startPhaseTimer() {
+            clearInterval(phaseTimerInterval);
+            phaseTimerInterval = setInterval(() => {
+                if (isGamePaused) return;
+
+                phaseTime--;
+                document.getElementById('phaseTimer').innerText = phaseTime;
+
+                if (phaseTime <= 10) {
+                    document.getElementById('phaseTimer').style.color = 'red';
+                } else {
+                    document.getElementById('phaseTimer').style.color = 'white';
+                }
+
+                if (phaseTime <= 0) {
+                    clearInterval(phaseTimerInterval);
+                    damagePlayer(3); // Instant kill or massive damage
+                    endGame(false, "TIME UP!");
+                }
+            }, 1000);
+        }
 
         function initNumbers() {
             const canvas = document.getElementById('canvas');
-            // Remove old numbers
             document.querySelectorAll('.num-target').forEach(n => n.remove());
 
             for (let i = 1; i <= totalNumbers; i++) {
@@ -262,16 +474,11 @@
                 num.className = 'num-target';
                 num.innerText = i;
                 num.id = `num-${i}`;
-
-                // Random position
                 const x = 50 + Math.random() * (window.innerWidth - 100);
-                const y = 50 + Math.random() * (window.innerHeight - 200);
+                const y = 80 + Math.random() * (window.innerHeight - 300); // Adjusted for HUD
                 num.style.left = `${x}px`;
                 num.style.top = `${y}px`;
-
-                // Float animation
                 animateFloat(num);
-
                 num.onclick = () => handleNumClick(i);
                 canvas.appendChild(num);
             }
@@ -284,20 +491,18 @@
 
             function move() {
                 if (isGamePaused) return requestAnimationFrame(move);
-
                 let x = parseFloat(el.style.left);
                 let y = parseFloat(el.style.top);
-
                 if (x <= 0 || x >= window.innerWidth - 60) vx *= -1;
-                if (y <= 100 || y >= window.innerHeight - 60) vy *= -1;
-
+                if (y <= 80 || y >= window.innerHeight - 60) vy *= -1;
                 el.style.left = (x + vx) + 'px';
                 el.style.top = (y + vy) + 'px';
-
                 requestAnimationFrame(move);
             }
             move();
         }
+
+        // --- GAMEPLAY LOGIC ---
 
         function handleNumClick(n) {
             if (isGamePaused) return;
@@ -308,35 +513,58 @@
                 setTimeout(() => el.remove(), 300);
 
                 if (currentTarget === totalNumbers) {
-                    damageBoss(20);
+                    // Phase 1: 20dmg, Phase 2: 15dmg, Phase 3: 10dmg (Harder to kill)
+                    let dmg = 25 - (currentPhase * 5);
+                    damageBoss(dmg);
                 } else {
                     currentTarget++;
                 }
             } else {
-                damagePlayer();
-                initNumbers(); // Reset sequence
+                damagePlayer(1);
+                initNumbers();
             }
         }
 
         function damageBoss(amt) {
             bossHp -= amt;
+            if (bossHp < 0) bossHp = 0;
             document.getElementById('bossHpBar').style.width = bossHp + '%';
 
             if (bossHp <= 0) {
-                endGame(true);
+                if (currentPhase < maxPhases) {
+                    currentPhase++;
+                    alert(`PHASE ${currentPhase} START! FASTER & HARDER!`);
+                    initPhase();
+                    initNumbers();
+                } else {
+                    endGame(true, "BOSS DEFEATED!");
+                }
             } else {
-                showQuiz();
+                // Trigger logic:
+                // Phase 1: HP < 50% -> 40% chance QTE
+                // Phase 2: HP < 70% -> 60% chance QTE
+                // Phase 3: HP < 90% -> 80% chance QTE
+                let threshold = 30 + (currentPhase * 20); // 50, 70, 90
+                let chance = 0.2 + (currentPhase * 0.2); // 0.4, 0.6, 0.8
+
+                if (bossHp < threshold && Math.random() < chance) {
+                    startQTE();
+                } else {
+                    if (Math.random() > 0.6) showQuiz(); // Less quiz in later phases
+                    else initNumbers();
+                }
             }
         }
 
-        function damagePlayer() {
-            pLives--;
+        function damagePlayer(amt = 1) {
+            pLives -= amt;
+            if (pLives < 0) pLives = 0;
             updateHearts();
-            document.body.style.backgroundColor = '#400';
-            setTimeout(() => document.body.style.backgroundColor = '#0a0a0c', 200);
+            document.body.classList.add('shake-screen');
+            setTimeout(() => document.body.classList.remove('shake-screen'), 500);
 
             if (pLives <= 0) {
-                endGame(false);
+                endGame(false, "NO LIVES LEFT!");
             }
         }
 
@@ -346,6 +574,7 @@
             document.getElementById('playerHearts').innerText = h;
         }
 
+        // --- QUIZ ---
         function showQuiz() {
             isGamePaused = true;
             const data = quizData[Math.floor(Math.random() * quizData.length)];
@@ -359,23 +588,154 @@
                 btn.innerText = choice;
                 btn.onclick = () => {
                     if (idx === data.correct) {
-                        alert("ถูกต้อง! บอสมึนงง");
+                        // Correct
+                        document.getElementById('quizOverlay').style.display = 'none';
+                        isGamePaused = false;
+                        if (pLives > 0) initNumbers();
                     } else {
-                        alert("ผิด! โดนบอสสวนกลับ");
-                        damagePlayer();
+                        // Wrong
+                        damagePlayer(1);
+                        document.getElementById('quizOverlay').style.display = 'none';
+                        isGamePaused = false;
+                        if (pLives > 0) initNumbers();
                     }
-                    document.getElementById('quizOverlay').style.display = 'none';
-                    isGamePaused = false;
-                    if (pLives > 0) initNumbers();
                 };
                 choicesDiv.appendChild(btn);
             });
-
             document.getElementById('quizOverlay').style.display = 'flex';
         }
 
-        function endGame(win) {
+        // --- QTE + DISTRACTION ---
+        function startQTE() {
             isGamePaused = true;
+            qteActive = true;
+
+            qteTargetNum = Math.floor(Math.random() * 9) + 1;
+            qteClicks = 0;
+            qteTimerVal = qteTimeLimit;
+
+            // UI
+            document.getElementById('qteTarget').innerText = `PRESS ${qteTargetNum}`;
+            document.getElementById('qteCounter').innerText = `0 / ${qteMaxClicks}`;
+            document.getElementById('qteProgress').style.width = '0%';
+            document.getElementById('qteOverlay').style.display = 'flex';
+            document.getElementById('distractionOverlay').style.display = 'none';
+
+            // Events
+            const btn = document.getElementById('qteBtn');
+            btn.onclick = (e) => { e.preventDefault(); handleQTEInput(qteTargetNum); };
+            window.addEventListener('keydown', handleQTEKey);
+
+            // Timer
+            clearInterval(qteInterval);
+            qteInterval = setInterval(() => {
+                qteTimerVal -= 0.01;
+                document.getElementById('qteTimer').innerText = qteTimerVal.toFixed(2);
+                if (qteTimerVal <= 0) {
+                    endQTE(false);
+                }
+            }, 10);
+
+            // Distraction Plan?
+            distractionActive = false;
+            let distractionChance = 0.3 * currentPhase; // 30%, 60%, 90%
+            if (Math.random() < distractionChance) {
+                clearTimeout(distractionTimeout);
+                let delay = 500 + Math.random() * 1000; // 0.5 - 1.5s
+                distractionTimeout = setTimeout(triggerDistraction, delay);
+            }
+        }
+
+        function triggerDistraction() {
+            if (!qteActive) return;
+            distractionActive = true;
+
+            const words = wordList[currentPhase] || wordList[3];
+            distractionTarget = words[Math.floor(Math.random() * words.length)];
+            distractionTyped = "";
+
+            document.getElementById('distractionWord').innerHTML = distractionTarget;
+            document.getElementById('distractionInput').innerText = "_";
+            document.getElementById('distractionOverlay').style.display = 'flex';
+        }
+
+        function handleQTEKey(e) {
+            if (!qteActive) return;
+
+            if (distractionActive) {
+                // Distraction Mode: Type letters
+                const key = e.key.toUpperCase();
+                // Basic checking for A-Z
+                if (key.length === 1 && key.match(/[A-Z]/)) {
+                    const expectedChar = distractionTarget[distractionTyped.length];
+                    if (key === expectedChar) {
+                        distractionTyped += key;
+                        // Update UI (Colorize)
+                        let display = `<span style="color:#2ecc71">${distractionTyped}</span>${distractionTarget.substring(distractionTyped.length)}`;
+                        document.getElementById('distractionWord').innerHTML = display;
+
+                        if (distractionTyped === distractionTarget) {
+                            // Cleared!
+                            distractionActive = false;
+                            document.getElementById('distractionOverlay').style.display = 'none';
+                        }
+                    } else {
+                        // Mistype penalty? Just shake or lose time
+                        document.getElementById('distractionWord').style.color = 'white';
+                        setTimeout(() => document.getElementById('distractionWord').style.color = 'red', 100);
+                    }
+                }
+                return; // Block QTE number input
+            }
+
+            // Normal QTE Mode
+            if (e.key == qteTargetNum) {
+                handleQTEInput(qteTargetNum);
+            }
+        }
+
+        function handleQTEInput(num) {
+            if (distractionActive) return; // Clicking button does nothing if distracted
+
+            qteClicks++;
+            document.getElementById('qteCounter').innerText = `${qteClicks} / ${qteMaxClicks}`;
+            let pct = (qteClicks / qteMaxClicks) * 100;
+            document.getElementById('qteProgress').style.width = `${pct}%`;
+
+            if (qteClicks >= qteMaxClicks) {
+                endQTE(true);
+            }
+        }
+
+        function endQTE(win) {
+            clearInterval(qteInterval);
+            clearTimeout(distractionTimeout);
+            qteActive = false;
+            distractionActive = false;
+            window.removeEventListener('keydown', handleQTEKey);
+            document.getElementById('qteOverlay').style.display = 'none';
+            document.getElementById('distractionOverlay').style.display = 'none';
+
+            if (win) {
+                let dmg = 20 * currentPhase; // Massive damage
+                bossHp -= dmg;
+                document.getElementById('bossHpBar').style.width = bossHp + '%';
+                alert("COMBO FINISH! MASSIVE DAMAGE!");
+                if (bossHp <= 0) damageBoss(0); // Trigger phase/win
+            } else {
+                damagePlayer(1);
+                alert("COMBO FAILED!");
+            }
+
+            isGamePaused = false;
+            if (pLives > 0 && bossHp > 0) initNumbers();
+        }
+
+        function endGame(win, reason = "") {
+            isGamePaused = true;
+            clearInterval(phaseTimerInterval);
+            clearInterval(qteInterval);
+
             const overlay = document.getElementById('statusOverlay');
             const msg = document.getElementById('statusMessage');
             const icon = document.getElementById('statusIcon');
@@ -385,15 +745,14 @@
                 icon.innerText = "🏆";
                 msg.style.color = "#2ecc71";
             } else {
-                msg.innerText = "GAME OVER";
+                msg.innerText = reason || "GAME OVER";
                 icon.innerText = "💀";
                 msg.style.color = "#e74c3c";
             }
-
             overlay.style.display = 'flex';
         }
 
-        window.onload = initNumbers;
+        window.onload = startGame;
     </script>
 </body>
 
