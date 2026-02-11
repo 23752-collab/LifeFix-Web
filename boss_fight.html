@@ -541,11 +541,12 @@
                 }
             } else {
                 // Trigger logic:
-                // Phase 1: HP < 50% -> 40% chance QTE
-                // Phase 2: HP < 70% -> 60% chance QTE
-                // Phase 3: HP < 90% -> 80% chance QTE
-                let threshold = 30 + (currentPhase * 20); // 50, 70, 90
-                let chance = 0.2 + (currentPhase * 0.2); // 0.4, 0.6, 0.8
+                // Increased frequency for better visibility
+                // Phase 1: HP < 60% -> 50% chance QTE
+                // Phase 2: HP < 80% -> 70% chance QTE
+                // Phase 3: HP < 100% -> 90% chance QTE
+                let threshold = 40 + (currentPhase * 20); // 60, 80, 100
+                let chance = 0.3 + (currentPhase * 0.2); // 0.5, 0.7, 0.9
 
                 if (bossHp < threshold && Math.random() < chance) {
                     startQTE();
@@ -638,7 +639,8 @@
 
             // Distraction Plan?
             distractionActive = false;
-            let distractionChance = 0.3 * currentPhase; // 30%, 60%, 90%
+            // Increased chance: Phase 1: 60%, Phase 2: 80%, Phase 3: 100%
+            let distractionChance = 0.4 + (currentPhase * 0.2);
             if (Math.random() < distractionChance) {
                 clearTimeout(distractionTimeout);
                 let delay = 500 + Math.random() * 1000; // 0.5 - 1.5s
